@@ -74,6 +74,29 @@ function App() {
     }
   };
 
+  // Function to edit a todo
+  const editTodo = async (id, newText) => {
+    try {
+      const response = await fetch(`${API_URL}/todos/${id}/edit`, {
+        method: 'PUT', // HTTP method for editing
+        headers: {
+          'Content-Type': 'application/json', // Tell server we're sending JSON
+        },
+        body: JSON.stringify({ text: newText }), // Send new text as JSON
+      });
+      
+      const updatedTodo = await response.json(); // Get updated todo from server
+      setTodos(prevTodos => 
+        prevTodos.map(todo => 
+          todo.id === id ? updatedTodo : todo // Replace the specific todo
+        )
+      );
+    } catch (err) {
+      setError('Failed to edit todo'); // Set error message
+      console.error('Error editing todo:', err);
+    }
+  };
+
   // Function to delete a todo
   const deleteTodo = async (id) => {
     try {
@@ -118,7 +141,7 @@ function App() {
       {/* App header */}
       <div className="app-header">
         <h1 className="app-title">My Todo List</h1>
-        <p>Keep track of your tasks!</p>
+        <p className="app-subtitle">Keep track of your tasks!</p>
       </div>
 
       {/* Error message display */}
@@ -156,6 +179,7 @@ function App() {
             key={todo.id} // React needs unique keys for list items
             todo={todo}
             onToggle={toggleTodo}
+            onEdit={editTodo}
             onDelete={deleteTodo}
           />
         ))}

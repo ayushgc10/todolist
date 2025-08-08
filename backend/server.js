@@ -36,6 +36,8 @@ app.post('/api/todos', (req, res) => {
     text: text, // The todo text from the request
     completed: false // New todos start as incomplete
   };
+
+  console.debug('Ayush newTodo', newTodo);
   
   // Add the new todo to our array
   todos.push(newTodo);
@@ -59,6 +61,29 @@ app.put('/api/todos/:id', (req, res) => {
   
   // Toggle the completed status
   todo.completed = !todo.completed;
+  
+  // Send back the updated todo
+  res.json(todo);
+});
+
+// PUT /api/todos/:id/edit - Edit a todo text
+app.put('/api/todos/:id/edit', (req, res) => {
+  // Get the todo ID from the URL parameters
+  const id = parseInt(req.params.id);
+  
+  // Get the new text from the request body
+  const { text } = req.body;
+  
+  // Find the todo in our array
+  const todo = todos.find(todo => todo.id === id);
+  
+  if (!todo) {
+    // If todo not found, return 404 error
+    return res.status(404).json({ error: 'Todo not found' });
+  }
+  
+  // Update the todo text
+  todo.text = text;
   
   // Send back the updated todo
   res.json(todo);
@@ -94,5 +119,6 @@ app.listen(PORT, () => {
   console.log('  GET    /api/todos     - Get all todos');
   console.log('  POST   /api/todos     - Create a new todo');
   console.log('  PUT    /api/todos/:id - Toggle todo completion');
+  console.log('  PUT    /api/todos/:id/edit - Edit todo text');
   console.log('  DELETE /api/todos/:id - Delete a todo');
 });
