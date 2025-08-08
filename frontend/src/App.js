@@ -15,6 +15,9 @@ function App() {
   // State to track loading and error states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // State to track theme (light/dark)
+  const [theme, setTheme] = useState('light');
 
   // API base URL - this is where our backend server runs
   const API_URL = 'http://localhost:3001/api';
@@ -126,6 +129,16 @@ function App() {
     fetchTodos();
   }, []); // Empty array means this effect runs only once
 
+  // Apply theme to document when theme changes
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  // Toggle theme function
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
+
   // If loading, show loading message
   if (loading) {
     return (
@@ -138,6 +151,15 @@ function App() {
   // Main app render
   return (
     <div className="app-container">
+      {/* Theme toggle button */}
+      <button 
+        onClick={toggleTheme} 
+        className="theme-toggle"
+        aria-label="Toggle theme"
+      >
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
+
       {/* App header */}
       <div className="app-header">
         <h1 className="app-title">My Todo List</h1>
@@ -187,7 +209,7 @@ function App() {
 
       {/* Show message when no todos */}
       {todos.length === 0 && !loading && (
-        <p style={{ textAlign: 'center', color: '#666', marginTop: '20px' }}>
+        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '20px' }}>
           No todos yet. Add one above!
         </p>
       )}
